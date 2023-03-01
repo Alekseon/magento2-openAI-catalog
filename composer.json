@@ -3,7 +3,7 @@
     "description": "N/A",
     "require": {
         "alekseon/openai-client": "100.*",
-        "php": "^8.1"
+        "php": "^8.1.0"
     },
     "type": "magento2-module",
     "version": "100.0.0",
