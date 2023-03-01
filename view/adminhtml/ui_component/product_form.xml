@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Alekseon sp. z o.o.
+ * http://www.alekseon.com/
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <!--For custom button-->
+    <argument name="data" xsi:type="array">
+        <item name="buttons" xsi:type="array">
+            <item name="customButton" xsi:type="string">Alekseon\OpenAICatalog\Block\Adminhtml\Product\DownloadGptAttributesButton</item>
+        </item>
+    </argument>
+</form>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Alekseon sp. z o.o.
+ * http://www.alekseon.com/
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <chat_gpt>
+            <product_catalog_seo>
+                <gpt_description>Give me the description for a product on 255 characters</gpt_description>
+                <gpt_short_description>Give me the description for a product on 55 characters</gpt_short_description>
+                <gpt_seo_keywords>Give me 10 keywords of the product separated by comma</gpt_seo_keywords>
+            </product_catalog_seo>
+        </chat_gpt>
+    </default>
+</config>

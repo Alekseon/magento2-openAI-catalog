@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Alekseon sp. z o.o.
+ * http://www.alekseon.com/
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Helper\Product\View">
+        <plugin name="Alekseon_OpenAICatalog::ProductMetaTitlePlugin" type="Alekseon\OpenAICatalog\Plugin\Product\ProductPageMetadataPlugin" sortOrder="1" />
+    </type>
+    <type name="Alekseon\OpenAICatalog\Controller\Adminhtml\Product\Downloadgpt">
+        <arguments>
+            <argument name="proccesors" xsi:type="array">
+                <item name="GptSEO" xsi:type="object">Alekseon\OpenAICatalog\Model\Product\DownloadGptAttributes\GptSEO</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
