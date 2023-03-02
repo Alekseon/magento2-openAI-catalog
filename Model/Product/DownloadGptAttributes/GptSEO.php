@@ -7,10 +7,10 @@ namespace Alekseon\OpenAICatalog\Model\Product\DownloadGptAttributes;
 
 use Alekseon\OpenAIApiClient\Model\OpenAIClient;
 use Alekseon\OpenAICatalog\Api\DownloadGptAttributesInteface;
-use Alekseon\OpenAICatalog\Helper\Data;
 use Alekseon\OpenAICatalog\Model\Config\Product\Config;
 use Alekseon\OpenAICatalog\Model\MappingAttributes\SEO;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
 
@@ -21,14 +21,14 @@ class GptSEO implements DownloadGptAttributesInteface
      * @param Config $config
      * @param StoreManagerInterface $storeManager
      * @param AttributeCollectionFactory $collectionFactory
-     * @param Data $data
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         protected readonly OpenAIClient $AIClient,
         protected readonly Config $config,
         protected readonly StoreManagerInterface $storeManager,
         protected readonly AttributeCollectionFactory $collectionFactory,
-        protected readonly Data $data
+        protected ProductRepositoryInterface $productRepository,
     ) { }
 
     /**
@@ -43,28 +43,29 @@ class GptSEO implements DownloadGptAttributesInteface
     {
         $attributesToQuestion = $this->getAttributesForQuestion($product);
 
-        foreach (SEO::ALEKSEON_GPT_PRODUCTATTR_SEO as $key => $value) {
-           $question = $this->config->getValue(
-               SEO::ALEKSEON_MAP_GPT_PRODUCTATTR_TO_CONFIG_QUESTION[$value],
-               $this->storeManager->getStore()->getId()
-           );
+        foreach (SEO::ALEKSEON_GPT_PRODUCTATTR_SEO as $key => $attributeCode) {
+            $question = $this->config->getValue(
+                SEO::ALEKSEON_MAP_GPT_PRODUCTATTR_TO_CONFIG_QUESTION[$attributeCode],
+                $this->storeManager->getStore()->getId()
+            );
 
-           $response = $this->AIClient->getCompletions($question . ' ' . $attributesToQuestion);
-           $gptText = $response->getChoiceText();
+            $response = $this->AIClient->getCompletions($question . ' ' . $attributesToQuestion);
+            $gptText = $response->getChoiceText();
 
-           if ($gptText) {
-               $this->data->setProductAttributeValue($product->getId(), $value, $gptText);
-           }
-       }
+            if ($gptText) {
+                $product->setCustomAttribute($attributeCode, trim($gptText));
+                $this->productRepository->save($product);
+            }
+        }
 
     }
 
     /**
      * @param ProductInterface $product
-     * @return string|null
+     * @return string
      */
     public function getAttributesForQuestion(ProductInterface $product): ?string
     {
-        return $product->getCustomAttribute('description')?->getValue();
+        return strip_tags($product->getCustomAttribute('description')?->getValue());
     }
 }
