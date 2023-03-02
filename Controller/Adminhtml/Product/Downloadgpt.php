@@ -10,21 +10,18 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Message\ManagerInterface;
 
 class Downloadgpt extends Action
 {
 
     /**
      * @param Context $context
-     * @param ProductRepository $productRepository
+     * @param ProductRepository $productRepository,
      * @param array $proccesors ,
-     * @param ManagerInterface $manager
      */
     public function __construct(
         Context $context,
         protected readonly ProductRepository $productRepository,
-        protected readonly ManagerInterface $messageManager,
         protected readonly array $proccesors
     ) {
         parent::__construct($context);
