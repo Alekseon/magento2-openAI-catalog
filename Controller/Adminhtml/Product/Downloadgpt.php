@@ -24,8 +24,8 @@ class Downloadgpt extends Action
     public function __construct(
         Context $context,
         protected readonly ProductRepository $productRepository,
-        protected readonly array $proccesors,
-        protected readonly ManagerInterface $messageManager
+        protected readonly ManagerInterface $messageManager,
+        protected readonly array $proccesors
     ) {
         parent::__construct($context);
     }
