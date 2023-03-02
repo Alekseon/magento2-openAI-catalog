@@ -42,11 +42,13 @@ class GptSEO implements DownloadGptAttributesInteface
     public function execute(ProductInterface $product): void
     {
         $attributesToQuestion = $this->getAttributesForQuestion($product);
+
         foreach (SEO::ALEKSEON_GPT_PRODUCTATTR_SEO as $key => $value) {
            $question = $this->config->getValue(
                SEO::ALEKSEON_MAP_GPT_PRODUCTATTR_TO_CONFIG_QUESTION[$value],
                $this->storeManager->getStore()->getId()
            );
+
            $response = $this->AIClient->getCompletions($question . ' ' . $attributesToQuestion);
            $gptText = $response->getChoiceText();
 
@@ -59,10 +61,10 @@ class GptSEO implements DownloadGptAttributesInteface
 
     /**
      * @param ProductInterface $product
-     * @return string
+     * @return string|null
      */
-    public function getAttributesForQuestion(ProductInterface $product): string
+    public function getAttributesForQuestion(ProductInterface $product): ?string
     {
-        return $product->getCustomAttribute('details')->getValue();
+        return $product->getCustomAttribute('description')?->getValue();
     }
 }

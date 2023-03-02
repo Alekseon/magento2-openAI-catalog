@@ -10,6 +10,7 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Message\ManagerInterface;
 
 class Downloadgpt extends Action
 {
@@ -17,12 +18,14 @@ class Downloadgpt extends Action
     /**
      * @param Context $context
      * @param ProductRepository $productRepository
-     * @param array $proccesors
+     * @param array $proccesors ,
+     * @param ManagerInterface $manager
      */
     public function __construct(
         Context $context,
         protected readonly ProductRepository $productRepository,
-        protected readonly array $proccesors
+        protected readonly array $proccesors,
+        protected readonly ManagerInterface $messageManager
     ) {
         parent::__construct($context);
     }
