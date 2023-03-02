@@ -31,7 +31,7 @@ class Data extends AbstractHelper
     {
         $product = $this->productRepository->getById($productId);
 
-        $product->setCustomAttribute($attributeCode, trim($attributeValue . '444'));
+        $product->setCustomAttribute($attributeCode, trim($attributeValue));
         $this->productRepository->save($product);
     }
 }
