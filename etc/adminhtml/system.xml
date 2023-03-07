@@ -7,16 +7,28 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <section id="chat_gpt" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="chat_gpt" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <group id="product_catalog_seo" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>GPT SEO question:</label>
-                <field id="gpt_description" translate="label" type="text" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="search_type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Search type</label>
+                    <source_model>Alekseon\OpenAICatalog\Model\Config\Product\Source\SearchType</source_model>
+                </field>
+                <field id="product_attrubutes" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product attriutes for searching (only text field)</label>
+                    <source_model>Alekseon\OpenAICatalog\Model\Config\Product\Source\ProductAttributes</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="search_type">manual</field>
+                    </depends>
+                </field>
+                <field id="gpt_description" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>GPT description question:</label>
                 </field>
-                <field id="gpt_short_description" translate="label" type="text" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="gpt_short_description" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>GPT short description question:</label>
                 </field>
-                <field id="gpt_seo_keywords" translate="label" type="text" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="gpt_seo_keywords" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>GPT SEO keywords question:</label>
                 </field>
             </group>

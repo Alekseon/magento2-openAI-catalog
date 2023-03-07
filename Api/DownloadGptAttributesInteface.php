@@ -9,5 +9,5 @@ use Magento\Catalog\Api\Data\ProductInterface;
 
 interface DownloadGptAttributesInteface
 {
-    public function execute(ProductInterface $product): void;
+    public function execute(ProductInterface $product): array;
 }

@@ -10,6 +10,7 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Serialize\Serializer\Json;
 
 class Downloadgpt extends Action
 {
@@ -22,7 +23,8 @@ class Downloadgpt extends Action
     public function __construct(
         Context $context,
         protected readonly ProductRepository $productRepository,
-        protected readonly array $proccesors
+        protected readonly array $proccesors,
+        protected readonly Json $json,
     ) {
         parent::__construct($context);
     }
@@ -33,17 +35,16 @@ class Downloadgpt extends Action
             $productId = (int)$this->getRequest()->getParam('product_id');
             $product = $this->productRepository->getById($productId);
 
+            $result = [];
             /** @var DownloadGptAttributesInteface $processor */
             foreach ($this->proccesors as $processor) {
-                $processor->execute($product);
+                $result[$processor->getName()] = $processor->execute($product);
             }
-
-            return $this->returnResult('catalog/*/edit', ['id' => $productId, '_current' => true]);
+            
+            return $this->jsonResponse($result);
         } catch (\Exception $e) {
-            $message = __("Some error so not save dates from OpenAI");
-            $this->messageManager->addErrorMessage($message);
-
-            return $this->returnResult('catalog/*/edit', ['id' => $productId, '_current' => true, 'error' => true]);
+            $this->messageManager->addErrorMessage($e->getMessage());
+            return $this->jsonResponse(['error' => $e->getMessage()]);
         }
 
     }
@@ -51,5 +52,12 @@ class Downloadgpt extends Action
     private function returnResult(string $path = '', array $params = [])
     {
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath($path, $params);
+    }
+
+    private function jsonResponse(array $result)
+    {
+        $this->getResponse()->representJson(
+            $this->json->serialize($result)
+        );
     }
 }

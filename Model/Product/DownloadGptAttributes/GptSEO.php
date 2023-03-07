@@ -8,14 +8,19 @@ namespace Alekseon\OpenAICatalog\Model\Product\DownloadGptAttributes;
 use Alekseon\OpenAIApiClient\Model\OpenAIClient;
 use Alekseon\OpenAICatalog\Api\DownloadGptAttributesInteface;
 use Alekseon\OpenAICatalog\Model\Config\Product\Config;
+use Alekseon\OpenAICatalog\Model\Config\Product\Source\SearchType;
 use Alekseon\OpenAICatalog\Model\MappingAttributes\SEO;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 
 class GptSEO implements DownloadGptAttributesInteface
 {
+    protected string $name = 'chatgpt';
+
     /**
      * @param OpenAIClient $AIClient
      * @param Config $config
@@ -28,7 +33,8 @@ class GptSEO implements DownloadGptAttributesInteface
         protected readonly Config $config,
         protected readonly StoreManagerInterface $storeManager,
         protected readonly AttributeCollectionFactory $collectionFactory,
-        protected ProductRepositoryInterface $productRepository,
+        protected readonly ProductRepositoryInterface $productRepository,
+        protected readonly CollectionFactory $productAttributeCollectionFactory
     ) { }
 
     /**
@@ -39,10 +45,11 @@ class GptSEO implements DownloadGptAttributesInteface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @throws \Magento\Framework\Exception\StateException
      */
-    public function execute(ProductInterface $product): void
+    public function execute(ProductInterface $product): array
     {
         $attributesToQuestion = $this->getAttributesForQuestion($product);
-
+        $result = [];
+        
         foreach (SEO::ALEKSEON_GPT_PRODUCTATTR_SEO as $key => $attributeCode) {
             $question = $this->config->getValue(
                 SEO::ALEKSEON_MAP_GPT_PRODUCTATTR_TO_CONFIG_QUESTION[$attributeCode],
@@ -51,6 +58,7 @@ class GptSEO implements DownloadGptAttributesInteface
 
             $response = $this->AIClient->getCompletions($question . ' ' . $attributesToQuestion);
             $gptText = $response->getChoiceText();
+            $result[$attributeCode] = $gptText;
 
             if ($gptText) {
                 $product->setCustomAttribute($attributeCode, trim($gptText));
@@ -58,6 +66,7 @@ class GptSEO implements DownloadGptAttributesInteface
             }
         }
 
+        return $result;
     }
 
     /**
@@ -66,6 +75,58 @@ class GptSEO implements DownloadGptAttributesInteface
      */
     public function getAttributesForQuestion(ProductInterface $product): ?string
     {
-        return strip_tags($product->getCustomAttribute('description')?->getValue());
+        $searchType = $this->config->getSearchType($this->storeManager->getStore()->getId());
+        $attributesToQuestion = '';
+
+        if ($searchType === SearchType::SEARCH_TYPE_AUTOMATIC) {
+            $attributesToQuestion = $this->getAttributesForAutomatic($product);
+        } elseif ($searchType === SearchType::SEARCH_TYPE_MANUAL) {
+            $attributesToQuestion = $this->getAttributesForManual($product);
+        }
+
+        return $attributesToQuestion;
+    }
+
+    public function getAttributesForAutomatic($product)
+    {
+        /** @var Collection $productAttributes */
+        $productAttributes = $this->productAttributeCollectionFactory->create();
+        $getAttributes = $productAttributes->addFieldToFilter(
+            ['is_filterable', 'backend_type'], [1, 'text']
+        );
+
+        $result = '';
+        foreach ($getAttributes as $attribute) {
+            $attributeCode = $attribute->getAttributeCode();
+
+            if ($product->getCustomAttribute($attributeCode)) {
+                $result .= ' ' .$product->getCustomAttribute($attributeCode)->getValue();
+            }
+        }
+
+        return $result;
+    }
+
+    public function getAttributesForManual($product)
+    {
+        $attributes = ($this->config->getProductAttributes($this->storeManager->getStore()->getId()));
+
+        if (empty($attributes)) {
+            throw new \Exception('Please choose attribures for search in config');
+        }
+
+        $result = '';
+        foreach ($attributes as $attribute) {
+            if ($product->getCustomAttribute($attribute)) {
+                $result .= ' ' .$product->getCustomAttribute($attribute)->getValue();
+            }
+        }
+
+        return $result;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }
