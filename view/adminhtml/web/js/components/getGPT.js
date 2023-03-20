@@ -19,6 +19,7 @@ define([
             $.ajax({
                 url: this.urlForSendQuestionToGPT,
                 type: 'GET',
+                showLoader: true,
                 success: function(data){
 
                     if (data.error || !data.chatgpt) {

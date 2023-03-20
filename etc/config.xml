@@ -10,9 +10,9 @@
         <chat_gpt>
             <product_catalog_seo>
                 <search_type>automatic</search_type>
-                <gpt_description>Give me the description for a product on 255 characters</gpt_description>
-                <gpt_short_description>Give me the description for a product on 55 characters</gpt_short_description>
-                <gpt_seo_keywords>Give me 10 keywords of the product separated by comma</gpt_seo_keywords>
+                <gpt_description>Give me the description for a product on 255 characters. Product data is:</gpt_description>
+                <gpt_short_description>Give me the description for a product on 55 characters. Product data is:</gpt_short_description>
+                <gpt_seo_keywords>Give me 10 keywords of the product separated by comma. Product data is:</gpt_seo_keywords>
             </product_catalog_seo>
         </chat_gpt>
     </default>

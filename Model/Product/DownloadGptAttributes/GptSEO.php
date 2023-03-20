@@ -49,14 +49,14 @@ class GptSEO implements DownloadGptAttributesInteface
     {
         $attributesToQuestion = $this->getAttributesForQuestion($product);
         $result = [];
-        
+
         foreach (SEO::ALEKSEON_GPT_PRODUCTATTR_SEO as $key => $attributeCode) {
             $question = $this->config->getValue(
                 SEO::ALEKSEON_MAP_GPT_PRODUCTATTR_TO_CONFIG_QUESTION[$attributeCode],
                 $this->storeManager->getStore()->getId()
             );
 
-            $response = $this->AIClient->getCompletions($question . ' ' . $attributesToQuestion);
+            $response = $this->AIClient->getCompletions($question . ' '.  $attributesToQuestion);
             $gptText = $response->getChoiceText();
             $result[$attributeCode] = $gptText ?: '';
         }
@@ -93,9 +93,10 @@ class GptSEO implements DownloadGptAttributesInteface
         $result = '';
         foreach ($getAttributes as $attribute) {
             $attributeCode = $attribute->getAttributeCode();
+            $value = $attribute->getFrontend()->getValue($product);
 
-            if ($product->getCustomAttribute($attributeCode)) {
-                $result .= ' ' .$product->getCustomAttribute($attributeCode)->getValue();
+            if ($value) {
+                $result .= $attribute->getFrontendLabel() . ': "' . $value . '", ';
             }
         }
 
@@ -111,9 +112,12 @@ class GptSEO implements DownloadGptAttributesInteface
         }
 
         $result = '';
-        foreach ($attributes as $attribute) {
-            if ($product->getCustomAttribute($attribute)) {
-                $result .= ' ' .$product->getCustomAttribute($attribute)->getValue();
+        foreach ($getAttributes as $attribute) {
+            $attributeCode = $attribute->getAttributeCode();
+            $value = $attribute->getFrontend()->getValue($product);
+
+            if ($value) {
+                $result .= $attribute->getFrontendLabel() . ': "' . $value . '", ';
             }
         }
 
