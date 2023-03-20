@@ -56,7 +56,7 @@ class GptSEO implements DownloadGptAttributesInteface
                 $this->storeManager->getStore()->getId()
             );
 
-            $response = $this->AIClient->getCompletions($question . ' '.  $attributesToQuestion);
+            $response = $this->AIClient->getCompletions($attributesToQuestion . '. ' . $question);
             $gptText = $response->getChoiceText();
             $result[$attributeCode] = $gptText ?: '';
         }
