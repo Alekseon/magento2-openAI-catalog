@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 ### Added
 
-## [100.0.6] - 2023-03-20
+## [100.0.6] - 2023-04-06
 ### Fixed
 - fix error with 'Undefined variable $getAttributes in vendor/alekseon/openai-catalog/Model/Product/DownloadGptAttributes/GptSEO.php on line 115'
 
