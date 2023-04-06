@@ -7,9 +7,16 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 ### Added
 
+## [100.0.6] - 2023-03-20
+### Fixed
+- fix error with 'Undefined variable $getAttributes in vendor/alekseon/openai-catalog/Model/Product/DownloadGptAttributes/GptSEO.php on line 115'
+
+## [100.0.5] - 2023-03-27
+### Fixed
+- make attribute ”Use chat gpt value” is not visible on frontend
+
 ## [100.0.4] - 2023-03-20
 - put question on the end of prompt
-
 
 ## [100.0.3] - 2023-03-20
 - ajax loader

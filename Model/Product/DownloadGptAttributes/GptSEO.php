@@ -112,8 +112,8 @@ class GptSEO implements DownloadGptAttributesInteface
         }
 
         $result = '';
-        foreach ($getAttributes as $attribute) {
-            $attributeCode = $attribute->getAttributeCode();
+
+        foreach ($attributes as $attribute) {
             $value = $attribute->getFrontend()->getValue($product);
 
             if ($value) {
