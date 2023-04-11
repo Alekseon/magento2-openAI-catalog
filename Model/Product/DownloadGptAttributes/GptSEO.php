@@ -16,6 +16,8 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
+use Magento\Eav\Api\AttributeRepositoryInterface;
+use Magento\Catalog\Model\Product;
 
 class GptSEO implements DownloadGptAttributesInteface
 {
@@ -27,6 +29,8 @@ class GptSEO implements DownloadGptAttributesInteface
      * @param StoreManagerInterface $storeManager
      * @param AttributeCollectionFactory $collectionFactory
      * @param ProductRepositoryInterface $productRepository
+     * @param CollectionFactory $productAttributeCollectionFactory
+     * @param AttributeRepositoryInterface $attributeRepository
      */
     public function __construct(
         protected readonly OpenAIClient $AIClient,
@@ -34,7 +38,8 @@ class GptSEO implements DownloadGptAttributesInteface
         protected readonly StoreManagerInterface $storeManager,
         protected readonly AttributeCollectionFactory $collectionFactory,
         protected readonly ProductRepositoryInterface $productRepository,
-        protected readonly CollectionFactory $productAttributeCollectionFactory
+        protected readonly CollectionFactory $productAttributeCollectionFactory,
+        protected readonly AttributeRepositoryInterface $attributeRepository
     ) { }
 
     /**
@@ -113,7 +118,8 @@ class GptSEO implements DownloadGptAttributesInteface
 
         $result = '';
 
-        foreach ($attributes as $attribute) {
+        foreach ($attributes as $attributeCode) {
+            $attribute = $this->attributeRepository->get(Product::ENTITY, $attributeCode);
             $value = $attribute->getFrontend()->getValue($product);
 
             if ($value) {
